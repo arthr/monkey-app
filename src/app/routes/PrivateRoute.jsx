@@ -3,13 +3,13 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/auth';
 
 function PrivateRoute() {
-    const { user, loading } = useAuth();
+    const { isLogged, loading } = useAuth();
 
     if (loading) {
         return <div>Carregando...</div>;
     }
 
-    if (!user) {
+    if (!isLogged) {
         return <Navigate to="/" replace />;
     }
 
