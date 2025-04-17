@@ -4,16 +4,16 @@ import { WebStorageStateStore } from 'oidc-client-ts';
 import AuthContext from './AuthContext';
 
 const cognitoAuthConfig = {
-    authority: import.meta.env.VITE_COGNITO_AUTHORITY, // https://cognito-idp.us-east-1.amazonaws.com/us-east-1_XXXXXXXXX
-    client_id: import.meta.env.VITE_COGNITO_CLIENT_ID, // 13gpv07b7dqg8dg8lv900imup3
-    redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI || window.location.origin, // http://localhost:3000
-    response_type: "code",
-    scope: "email openid profile",
+    authority: import.meta.env.VITE_COGNITO_AUTHORITY,
+    client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
+    redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI || window.location.origin,
+    response_type: import.meta.env.VITE_COGNITO_RESPONSE_TYPE || "code",
+    scope: import.meta.env.VITE_COGNITO_SCOPE || "email openid profile",
+    //post_logout_redirect_uri: import.meta.env.VITE_COGNITO_LOGOUT_URI || window.location.origin,
+    //silent_redirect_uri: window.location.origin + "/silent-renew.html",
     onSigninCallback: () => window.history.replaceState({}, document.title, window.location.pathname),
     userStore: new WebStorageStateStore({ store: window.localStorage }),
 
-    //post_logout_redirect_uri: import.meta.env.VITE_COGNITO_LOGOUT_URI || window.location.origin,
-    //silent_redirect_uri: window.location.origin + "/silent-renew.html",
 };
 
 function AuthContextWrapper({ children }) {

@@ -1,4 +1,3 @@
-// modules/auth/hooks/useAuth.js
 import { useContext, useMemo } from 'react';
 import AuthContext from '../../contexts/AuthContext';
 
@@ -9,22 +8,22 @@ export default function useAuth() {
         throw new Error('useAuth deve ser usado dentro de um <AuthProvider>');
     }
 
-    const { user, loading, login, logout } = context;
+    const { user, loading, login, logout, isLogged } = context;
 
-    const isLogged = useMemo(() => !!user, [user]);
-    const username = useMemo(() => user?.username || '', [user]);
-    // TODO: Implementar RBAC (Role-Based Access Control) ou ) ou ABAC (Attribute-Based Access Control) para controle de acesso mais granular
-    const isAdmin = useMemo(() => user?.role === 'admin', [user]);
-    const role = useMemo(() => user?.role || '', [user]);
+    const username = useMemo(() => user?.profile?.preferred_username || user?.profile?.email || '', [user]);
+    const email = useMemo(() => user?.profile?.email || '', [user]);
+    const role = useMemo(() => user?.profile?.role || '', [user]);
+    const isAdmin = useMemo(() => role === 'admin', [role]);
 
     return {
         user,
         username,
+        email,
+        role,
+        isAdmin,
         loading,
+        isLogged,
         login,
         logout,
-        isLogged,
-        isAdmin,
-        role,
     };
 }
