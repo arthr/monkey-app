@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import LayoutContext from './LayoutContext';
 
-export function LayoutProvider({ children }) {
+function LayoutContextWrapper({ children }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
         const savedState = localStorage.getItem('sidebarCollapsed');
         return savedState ? JSON.parse(savedState) : window.innerWidth < 768;
     });
 
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-    useEffect(() => {
-        if (localStorage.getItem('flowbite-theme-mode') === 'dark' || (!('flowbite-theme-mode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    }, []);
 
     useEffect(() => {
         const handleThemeChange = (e) => {
@@ -31,6 +23,18 @@ export function LayoutProvider({ children }) {
         return () => {
             window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleThemeChange);
         };
+    }, []);
+
+    useEffect(() => {
+        if (
+            localStorage.getItem('flowbite-theme-mode') === 'dark' ||
+            (!('flowbite-theme-mode' in localStorage) &&
+                window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     }, []);
 
     useEffect(() => {
@@ -54,14 +58,24 @@ export function LayoutProvider({ children }) {
         setSidebarCollapsed(prev => !prev);
     };
 
+    const contextValue = {
+        sidebarCollapsed,
+        setSidebarCollapsed,
+        toggleSidebar,
+        isMobile,
+    };
+
     return (
-        <LayoutContext.Provider value={{
-            sidebarCollapsed,
-            setSidebarCollapsed,
-            toggleSidebar,
-            isMobile,
-        }}>
+        <LayoutContext.Provider value={contextValue}>
             {children}
         </LayoutContext.Provider>
     );
-} 
+}
+
+export function LayoutProvider({ children }) {
+    return (
+        <LayoutContextWrapper>
+            {children}
+        </LayoutContextWrapper>
+    );
+}
