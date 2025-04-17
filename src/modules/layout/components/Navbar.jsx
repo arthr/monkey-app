@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiMenu, HiSearch } from 'react-icons/hi';
 import { FiLogOut } from 'react-icons/fi';
-import { useAuth } from '../../auth/hooks/useAuth';
-import { useLayout } from '../contexts/layout';
+import useAuth from '../../auth/hooks/useAuth';
+import useLayout from '../hooks/useLayout'
 import {
     Avatar,
     Dropdown,
@@ -52,7 +52,7 @@ function NavbarComponent({ isAuthenticated }) {
                     {/* Logo e nome da aplicação */}
                     <NavbarBrand href="/">
                         <img src="/rpm.svg" className="mr-3 h-8" alt="Remessas Portal Monkey" />
-                        <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Remessas Portal Monkey</span>
+                        <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white"></span>
                     </NavbarBrand>
 
                     {/* Barra de pesquisa - visível apenas em desktop */}

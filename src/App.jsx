@@ -1,16 +1,16 @@
 import React from 'react'
+import { AuthProvider } from './app/contexts/auth'
+import { LayoutProvider } from './app/contexts/layout/LayoutProvider'
+import { AppRoutes } from './app/routes/routes'
 
 function App() {
 
   return (
-    <div className="App">
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <p className="text-lg text-gray-700">
-        This is a simple React app with Tailwind CSS and Flowbite.
-      </p>
-    </div>
+    <AuthProvider>
+      <LayoutProvider>
+        <AppRoutes />
+      </LayoutProvider>
+    </AuthProvider>
   )
 }
 

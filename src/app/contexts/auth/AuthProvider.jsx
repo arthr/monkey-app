@@ -19,13 +19,13 @@ const cognitoAuthConfig = {
 function AuthContextWrapper({ children }) {
     const oidc = useOidcAuth();
 
-    const { user, isAuthenticated, isLoading, signIn, signOut } = oidc;
+    const { user, isAuthenticated, isLoading, signoutRedirect, signinRedirect } = oidc;
 
     const contextValue = {
         user,
         loading: isLoading,
-        login: signIn,
-        logout: signOut,
+        login: signinRedirect,
+        logout: signoutRedirect,
         isLogged: isAuthenticated,
         raw: oidc, // opcional: expor tudo do oidc se quiser mais flexibilidade
     };

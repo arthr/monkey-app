@@ -6,7 +6,7 @@ import {
     SidebarItems,
     SidebarItemGroup,
 } from 'flowbite-react';
-import { useLayout } from '../contexts/layout';
+import useLayout from '../hooks/useLayout'
 
 function SidebarComponent() {
     const { sidebarCollapsed } = useLayout();
