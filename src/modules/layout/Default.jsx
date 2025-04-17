@@ -10,15 +10,19 @@ function Default({ children }) {
     const { isAuthenticated } = useAuth();
 
     return (
-        <div className="antialiased bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
+        <div className="flex flex-col min-h-screen antialiased bg-gray-50 dark:bg-gray-900 dark:text-white">
             {/* Navbar */}
-            <Navbar isAuthenticated={isAuthenticated} />
+            <Navbar fixed={true} isAuthenticated={isAuthenticated} />
             {/* Sidebar */}
             <Sidebar isCollapsed={sidebarCollapsed} />
             {/* Main Content */}
-            <main className={`p-4 min-h-screen transition-all duration-300 ${isMobile ? 'md:ml-64' : sidebarCollapsed ? 'md:ml-16' : 'md:ml-64'} pt-20`}>
+            <main className={`p-4 flex-1 transition-all duration-300 ${isMobile ? 'md:ml-64' : sidebarCollapsed ? 'md:ml-16' : 'md:ml-64'} pt-20`}>
                 {children}
             </main>
+            {/* Footer */}
+            <footer className="bg-gray-200 p-4 text-center">
+                <p className="text-sm text-gray-600">© 2025 Direta Capital. Todos os direitos reservados.</p>
+            </footer>
         </div>
     );
 }

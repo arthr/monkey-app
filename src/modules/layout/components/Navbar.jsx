@@ -19,7 +19,7 @@ import {
     TextInput
 } from 'flowbite-react';
 
-function NavbarComponent({ isAuthenticated }) {
+function NavbarComponent({ fixed = false, isAuthenticated }) {
     const { logout, user } = useAuth();
     const { toggleSidebar, searchQuery, setSearchQuery, isMobile } = useLayout();
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ function NavbarComponent({ isAuthenticated }) {
     };
 
     return (
-        <Navbar fluid className="fixed w-full z-50 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <Navbar fluid className={`${fixed ? 'fixed' : ''} w-full z-50 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800`} >
             <div className="flex flex-wrap items-center justify-between w-full">
                 <div className="flex items-center">
                     {/* Botão de menu para dispositivos móveis */}
