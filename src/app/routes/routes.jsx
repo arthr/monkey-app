@@ -2,9 +2,11 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import PrivateRoute from "./PrivateRoute";
+import Private from "../../modules/layout/Private";
+import Public from "../../modules/layout/Public";
+
 import { authRoutes } from "../../modules/auth/routes";
 import { remessasRoutes } from "../../modules/remessas/routes";
-import Public from "../../modules/layout/Public";
 
 
 export function AppRoutes() {
@@ -12,7 +14,9 @@ export function AppRoutes() {
     <Routes>
       {/* Rotas privadas */}
       <Route element={<PrivateRoute />}>
-        {remessasRoutes}
+        <Route element={<Private />}>
+          {remessasRoutes}
+        </Route>
       </Route>
       {/* Rotas públicas */}
       <Route element={<Public />}>

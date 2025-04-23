@@ -37,9 +37,9 @@ function AuthContextWrapper({ children }) {
     );
 }
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children, ...props }) {
     return (
-        <OidcAuthProvider {...cognitoAuthConfig}>
+        <OidcAuthProvider {...props} {...cognitoAuthConfig}>
             <AuthContextWrapper>{children}</AuthContextWrapper>
         </OidcAuthProvider>
     );
