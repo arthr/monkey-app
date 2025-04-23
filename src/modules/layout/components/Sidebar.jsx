@@ -7,6 +7,7 @@ import {
     SidebarItemGroup,
 } from 'flowbite-react';
 import useLayout from '../hooks/useLayout'
+import { FaRegFileAlt } from "react-icons/fa";
 
 function SidebarComponent() {
     const { sidebarCollapsed } = useLayout();
@@ -29,12 +30,12 @@ function SidebarComponent() {
                     <SidebarItemGroup>
                                 <SidebarItem
                                     key={1}
-                                    //as={Link}
-                                    //to={item.path} // Caminho relativo gerenciado pelo React Router
-                                    //icon={item.icon}
-                                    //active={item.active}
+                                    as={Link}
+                                    to="/remessas" // Caminho relativo gerenciado pelo React Router
+                                    icon={FaRegFileAlt}
+                                    active={pathname === "/remessas"}
                                 >
-                                    Teste
+                                    Remessas
                                 </SidebarItem>
                     </SidebarItemGroup>
                 </SidebarItems>

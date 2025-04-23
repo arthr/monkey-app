@@ -100,8 +100,8 @@ function NavbarComponent({ fixed = false, isAuthenticated }) {
                             }
                         >
                             <DropdownHeader>
-                                <span className="block text-sm">{user?.username || 'Visitante'}</span>
-                                <span className="block truncate text-sm font-medium">usuario@diretacapital.com.br</span>
+                                <span className="block text-sm">{user?.profile?.name || 'Visitante'}</span>
+                                <span className="block truncate text-sm font-medium">{user?.profile?.email || 'usuario@diretacapital.com.br' }</span>
                             </DropdownHeader>
                             <DropdownItem onClick={() => navigate('/profile')}>Meu Perfil</DropdownItem>
                             <DropdownItem onClick={() => navigate('/settings')}>Configurações</DropdownItem>
