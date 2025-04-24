@@ -11,35 +11,38 @@ const Listar = () => {
     const auth = useAuth();
     const { user } = auth;
     const { profile } = user || {};
-    
-    const { 
-        remessas, 
-        loading, 
-        error, 
-        dateFilter, 
-        setDateFilter, 
-        filterMode, 
-        setFilterMode, 
-        refresh 
+
+    const {
+        remessas,
+        loading,
+        error,
+        dateFilter,
+        setDateFilter,
+        filterMode,
+        setFilterMode,
+        refresh
     } = useRemessas();
 
     return (
-        <div className="container mx-auto">
+        <div className="mx-auto">
             <div className="flex flex-col items-start mb-6">
+                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+                    Remessas
+                </h3>
                 <DateFilter
-                    dateFilter={dateFilter} 
+                    dateFilter={dateFilter}
                     setDateFilter={setDateFilter}
                     filterMode={filterMode}
                     setFilterMode={setFilterMode}
                     onRefresh={refresh}
                 />
-                
+
                 {error && (
                     <Alert color="failure" icon={FiAlertCircle} className="mb-4 w-full">
                         <span className="font-medium">Erro!</span> {error}
                     </Alert>
                 )}
-                
+
                 {!loading && remessas.length === 0 && (
                     <Alert color="info" icon={FiInfo} className="mb-4 w-full">
                         <span className="font-medium">Informação:</span> Não existem remessas disponíveis para o período selecionado.
@@ -49,9 +52,9 @@ const Listar = () => {
                 {loading ? (
                     <Loader />
                 ) : (
-                    <RemessaTable 
-                        remessas={remessas} 
-                        loading={loading} 
+                    <RemessaTable
+                        remessas={remessas}
+                        loading={loading}
                     />
                 )}
             </div>

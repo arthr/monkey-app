@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Badge, Button, TextInput, TableHead, TableHeadCell, TableBody, TableRow, TableCell } from 'flowbite-react';
+import { Table, Badge, TextInput, TableHead, TableHeadCell, TableBody, TableRow, TableCell, Pagination, Card } from 'flowbite-react';
 import { FiX, FiSearch } from 'react-icons/fi';
 
 const RemessaTable = ({ remessas, loading }) => {
@@ -55,12 +55,17 @@ const RemessaTable = ({ remessas, loading }) => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredRemessas.slice(indexOfFirstItem, indexOfLastItem);
 
+    // Calcular o intervalo de itens sendo exibidos
+    const totalItems = filteredRemessas.length;
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const resetSearch = () => setSearchTerm('');
 
     return (
-        <div className="container mx-auto">
+        <div className="w-full mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
                 <div className="relative w-full md:w-1/3">
                     <TextInput
@@ -83,7 +88,7 @@ const RemessaTable = ({ remessas, loading }) => {
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <Card className="mb-4 w-full overflow-x-auto [&>div:first-child]:p-0">
                 <Table hoverable>
                     <TableHead>
                         <TableRow>
@@ -124,16 +129,16 @@ const RemessaTable = ({ remessas, loading }) => {
                     <TableBody className="divide-y">
                         {currentItems.map(remessa => (
                             <TableRow key={remessa.filename} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <TableCell>{remessa.titulos?.[0]?.sacadorAvalista || 'N/A'}</TableCell>
+                                <TableCell>{remessa.titulos?.[0]?.sacadorAvalista || 'N/D'}</TableCell>
                                 <TableCell>{remessa.filename}</TableCell>
-                                <TableCell className="text-center">{remessa.situacao?.usuario || 'N/A'}</TableCell>
+                                <TableCell className="text-center">{remessa.situacao?.usuario || 'N/D'}</TableCell>
                                 <TableCell className="flex justify-center">
                                     {remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
                                         <Badge color="success">Aprovada</Badge>
                                     ) : !remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
                                         <Badge color="failure">Reprovada</Badge>
                                     ) : (
-                                        <Badge color="failure">Pendente</Badge>
+                                        <Badge color="warning">Pendente</Badge>
                                     )}
                                 </TableCell>
                                 <TableCell className="text-center">{new Date(remessa.timestamp).toLocaleString()}</TableCell>
@@ -147,45 +152,24 @@ const RemessaTable = ({ remessas, loading }) => {
                         ))}
                     </TableBody>
                 </Table>
-            </div>
+            </Card>
 
             {/* Paginação */}
-            <div className="flex justify-center mt-4">
-                <nav>
-                    <ul className="inline-flex -space-x-px gap-1 text-sm">
-                        <li>
-                            <Button
-                                color="gray"
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="rounded-l-lg h-8"
-                            >
-                                Anterior
-                            </Button>
-                        </li>
-                        {[...Array(Math.ceil(filteredRemessas.length / itemsPerPage)).keys()].map(num => (
-                            <li key={num + 1}>
-                                <Button
-                                    className='rounded-lg size-8'
-                                    color={currentPage === num + 1 ? "blue" : "gray"}
-                                    onClick={() => paginate(num + 1)}
-                                >
-                                    {num + 1}
-                                </Button>
-                            </li>
-                        ))}
-                        <li>
-                            <Button
-                                color="gray"
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === Math.ceil(filteredRemessas.length / itemsPerPage)}
-                                className="rounded-r-lg h-8"
-                            >
-                                Próximo
-                            </Button>
-                        </li>
-                    </ul>
-                </nav>
+            <div className="flex flex-col justify-center mt-4 text-center">
+                {/* Table Data Navigation */}
+                <div className="text-sm text-gray-700 dark:text-gray-400">
+                    Mostrando <span className="font-medium">{totalItems > 0 ? startItem : 0}</span> a{" "}
+                    <span className="font-medium">{endItem}</span> de{" "}
+                    <span className="font-medium">{totalItems}</span> registros
+                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={paginate}
+                    showIcons={true}
+                    totalPages={Math.ceil(filteredRemessas.length / itemsPerPage)}
+                    nextLabel=""
+                    previousLabel=""
+                />
             </div>
         </div>
     );
