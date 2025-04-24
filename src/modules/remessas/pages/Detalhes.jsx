@@ -90,7 +90,7 @@ const Detalhes = () => {
                 {/* Botões de ação no topo */}
                 <div className="w-full flex flex-col sm:flex-row justify-between gap-4 mb-6">
                     <Link to="/remessas">
-                        <Button color="gray">
+                        <Button outline color="gray">
                             <FiArrowLeft className="mr-2" />
                             Voltar
                         </Button>
@@ -98,21 +98,25 @@ const Detalhes = () => {
 
                     <div className="flex flex-col sm:flex-row gap-2">
                         {remessa.arquivoRetorno && (
-                            <Button color="info">
+                            <Button outline color="gray" onClick={() => window.open(remessa.arquivoRetorno, "_blank")}>
                                 <FiDownload className="mr-2" />
                                 Baixar Arquivo de Retorno
                             </Button>
                         )}
 
                         <Button
-                            color="success"
+                            outline
+                            color={remessa.situacao?.aprovada
+                                ? 'green'
+                                : (remessa.situacao?.timestamp && !remessa.situacao?.aprovada ? 'red' : 'blue')
+                            }
                             onClick={() => setModalIsOpen(true)}
                             disabled={remessa.situacao?.aprovada || (remessa.situacao?.timestamp && !remessa.situacao?.aprovada)}
                         >
                             <FiCheck className="mr-2" />
                             {remessa.situacao?.aprovada
                                 ? 'Aprovada'
-                                : (remessa.situacao?.timestamp && !remessa.situacao?.aprovada ? 'Reprovada' : 'Aprovar/Reprovar')
+                                : (remessa.situacao?.timestamp && !remessa.situacao?.aprovada ? 'Reprovada' : 'Aprovar / Reprovar')
                             }
                         </Button>
                     </div>
@@ -207,7 +211,7 @@ const Detalhes = () => {
                 <ModalHeader>
                     Aprovar ou Reprovar Remessa
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody className="py-1 px-2">
                     <AprovarReprovar
                         remessa={remessa}
                         onClose={() => setModalIsOpen(false)}

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button, TextInput, Alert } from 'flowbite-react';
 import { approveRemessa } from '../services/remessaApi';
 import { FiCheck, FiX, FiSend, FiLogOut } from 'react-icons/fi';
+import useAuth from '../../auth/hooks/useAuth';
 
 const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
+    const { user } = useAuth();
     const [aprovada, setAprovada] = useState(null);
-    const [usuario, setUsuario] = useState("");
+    const [usuario] = useState(user.profile.name || false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,7 +26,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
         try {
             await approveRemessa(remessa.filename, remessa.timestamp, data);
             if (onSuccess) onSuccess();
-            onClose(); // Fecha o modal após a operação ser bem-sucedida
+            onClose();
         } catch (error) {
             console.error("Erro ao aprovar/reprovar a remessa: ", error);
             setError(`Erro ao processar: ${error.message || 'Tente novamente mais tarde'}`);
@@ -40,23 +42,28 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     {error}
                 </Alert>
             )}
-            
+
+            {/* Instruções */}
+            <div className="mb-4">
+                <p>Por favor, selecione uma opção e clique em Enviar.</p>
+                <small className="text-sm text-orange-500 italic">Atenção! Esta ação é irreversível.</small>
+            </div>
+
             <div className="mb-4">
                 <TextInput
+                    color="info"
                     type="text"
                     placeholder="Digite seu nome para confirmar"
                     value={usuario}
-                    onChange={(e) => {
-                        setUsuario(e.target.value);
-                        setError(""); // Limpa o erro ao digitar
-                    }}
+                    readOnly={true}
                     disabled={isSubmitting}
                 />
             </div>
 
             <div className="flex justify-between items-center gap-3">
                 <Button
-                    color="success"
+                    outline
+                    color="green"
                     onClick={() => setAprovada(true)}
                     disabled={aprovada === true || isSubmitting}
                     className="flex-1"
@@ -65,7 +72,8 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     Aprovar
                 </Button>
                 <Button
-                    color="failure"
+                    outline
+                    color="red"
                     onClick={() => setAprovada(false)}
                     disabled={aprovada === false || isSubmitting}
                     className="flex-1"
@@ -74,7 +82,8 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     Reprovar
                 </Button>
                 <Button
-                    color="primary"
+                    outline
+                    color="blue"
                     onClick={handleSubmit}
                     disabled={aprovada === null || isSubmitting}
                     className="flex-1"

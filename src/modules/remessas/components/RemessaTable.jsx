@@ -10,6 +10,21 @@ const RemessaTable = ({ remessas, loading }) => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Função para calcular o valor total dos títulos
+    const calcularValorTotal = (remessa, withLocale = true) => {
+        if (!remessa?.titulos) return "R$ 0,00";
+        const total = remessa.titulos.reduce(
+            (sum, titulo) => sum + parseFloat(titulo.valorTitulo || 0),
+            0
+        );
+        if (!withLocale) return total;
+        // Formatar o valor total como moeda brasileira
+        return total.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
+    };
+
     // Função para ordenar as remessas
     const sortRemessas = (column) => {
         const order = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -27,6 +42,10 @@ const RemessaTable = ({ remessas, loading }) => {
             return sortOrder === 'asc'
                 ? a.titulos?.length - b.titulos?.length
                 : b.titulos?.length - a.titulos?.length;
+        } else if (sortColumn === 'valorTotal') {
+            return sortOrder === 'asc'
+                ? calcularValorTotal(a, false) - calcularValorTotal(b, false)
+                : calcularValorTotal(b, false) - calcularValorTotal(a, false);
         } else if (sortColumn === 'filename') {
             return sortOrder === 'asc'
                 ? a.filename.localeCompare(b.filename)
@@ -123,6 +142,12 @@ const RemessaTable = ({ remessas, loading }) => {
                             >
                                 Títulos {sortColumn === 'titulos' && (sortOrder === 'asc' ? '↑' : '↓')}
                             </TableHeadCell>
+                            <TableHeadCell
+                                className="cursor-pointer text-right"
+                                onClick={() => sortRemessas('valorTotal')}
+                            >
+                                Valor Total {sortColumn === 'valorTotal' && (sortOrder === 'asc' ? '↑' : '↓')}
+                            </TableHeadCell>
                             <TableHeadCell className="text-center">Ações</TableHeadCell>
                         </TableRow>
                     </TableHead>
@@ -143,6 +168,7 @@ const RemessaTable = ({ remessas, loading }) => {
                                 </TableCell>
                                 <TableCell className="text-center">{new Date(remessa.timestamp).toLocaleString()}</TableCell>
                                 <TableCell className="text-center">{remessa.titulos?.length || 0}</TableCell>
+                                <TableCell className="text-right">{calcularValorTotal(remessa)}</TableCell>
                                 <TableCell className="text-center">
                                     <Link to={`/remessas/${remessa.filename}`} className="text-blue-700 hover:underline">
                                         Ver Detalhes
