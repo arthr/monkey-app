@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const remessaApi = axios.create({
-    baseURL: import.meta.env.VITE_API_GATEWAY_URL, // Coloque a URL base do seu backend aqui
+    baseURL: import.meta.env.VITE_API_GATEWAY_URL,
+    headers: {
+        'Origin': '*',
+    },
 });
 
 // Listar todas as remessas (opcional com filtro de data)
@@ -30,6 +33,16 @@ export const approveRemessa = (filename, timestamp, data) => {
 // Obter detalhes de uma remessa com timestamp
 export const getRemessaDetails = (filename, timestamp) => {
     return remessaApi.get(`/remessas/${filename}/${timestamp}`);
+};
+
+// Obter signed URL para download do arquivo remessa
+export const getRemessaUrl = (filename) => {
+    return remessaApi.get(`/remessas/${filename}/download`);
+};
+
+// Obter signed URL para download do arquivo retorno
+export const getRetornoUrl = (filename) => {
+    return remessaApi.get(`/retornos/${filename}/download`);
 };
 
 export default remessaApi;

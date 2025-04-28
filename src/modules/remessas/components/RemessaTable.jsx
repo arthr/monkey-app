@@ -154,7 +154,7 @@ const RemessaTable = ({ remessas, loading }) => {
                     <TableBody className="divide-y">
                         {currentItems.map(remessa => (
                             <TableRow key={remessa.filename} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <TableCell>{remessa.titulos?.[0]?.sacadorAvalista || 'N/D'}</TableCell>
+                                <TableCell className="font-medium">{remessa.titulos?.[0]?.sacadorAvalista || 'N/D'}</TableCell>
                                 <TableCell>{remessa.filename}</TableCell>
                                 <TableCell className="text-center">{remessa.situacao?.usuario || 'N/D'}</TableCell>
                                 <TableCell className="flex justify-center">
@@ -168,7 +168,7 @@ const RemessaTable = ({ remessas, loading }) => {
                                 </TableCell>
                                 <TableCell className="text-center">{new Date(remessa.timestamp).toLocaleString()}</TableCell>
                                 <TableCell className="text-center">{remessa.titulos?.length || 0}</TableCell>
-                                <TableCell className="text-right">{calcularValorTotal(remessa)}</TableCell>
+                                <TableCell className="text-right font-medium">{calcularValorTotal(remessa)}</TableCell>
                                 <TableCell className="text-center">
                                     <Link to={`/remessas/${remessa.filename}`} className="text-blue-700 hover:underline">
                                         Ver Detalhes

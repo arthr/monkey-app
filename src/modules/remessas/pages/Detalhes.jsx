@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button, Alert, Badge, Modal, Spinner, ModalBody, ModalHeader } from "flowbite-react";
 import { FiArrowLeft, FiCheck, FiDownload, FiAlertCircle, FiInfo } from "react-icons/fi";
@@ -14,17 +14,25 @@ import useRemessaDetail from "../hooks/useRemessaDetail";
 
 const Detalhes = () => {
     const { filename } = useParams();
-    const { remessa, loading, error, refreshRemessa } = useRemessaDetail(filename);
+    const {
+        remessa, loading, error,
+        downloadingRemessa, downloadingRetorno,
+        remessaUrl, retornoUrl,
+        refreshRemessa, fetchRemessaUrl, fetchRetornoUrl
+    } = useRemessaDetail(filename);
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
-    // Função para formatar a data
-    const formatarData = (data) => {
-        if (!data || data.length !== 6) return "N/D";
-        const dia = data.substring(0, 2);
-        const mes = data.substring(2, 4);
-        const ano = "20" + data.substring(4, 6);
-        return `${dia}/${mes}/${ano}`;
-    };
+    useEffect(() => {
+        if (remessaUrl) {
+            window.open(remessaUrl, "_blank");
+        }
+    }, [remessaUrl]);
+
+    useEffect(() => {
+        if (retornoUrl) {
+            window.open(retornoUrl, "_blank");
+        }
+    }, [retornoUrl]);
 
     // Função para calcular o valor total dos títulos
     const calcularValorTotal = () => {
@@ -97,10 +105,34 @@ const Detalhes = () => {
                     </Link>
 
                     <div className="flex flex-col sm:flex-row gap-2">
+                        {remessa.filename && (
+                            <Button outline color="cyan" onClick={async () => fetchRemessaUrl(remessa.filename)} disabled={downloadingRemessa}>
+                                {downloadingRemessa ? (
+                                    <>
+                                        <Spinner className="mr-2 size-5" />
+                                        Gerando link...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiDownload className="mr-2" />
+                                        Baixar Arquivo de Remessa
+                                    </>
+                                )}
+                            </Button>
+                        )}
                         {remessa.arquivoRetorno && (
-                            <Button outline color="gray" onClick={() => window.open(remessa.arquivoRetorno, "_blank")}>
-                                <FiDownload className="mr-2" />
-                                Baixar Arquivo de Retorno
+                            <Button outline color="gray" onClick={async () => fetchRetornoUrl(remessa.arquivoRetorno)} disabled={downloadingRetorno}>
+                                {downloadingRetorno ? (
+                                    <>
+                                        <Spinner className="mr-2 size-5" />
+                                        Gerando link...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiDownload className="mr-2" />
+                                        Baixar Arquivo de Retorno
+                                    </>
+                                )}
                             </Button>
                         )}
 
