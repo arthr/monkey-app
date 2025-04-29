@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { HiMenu, HiSearch } from 'react-icons/hi';
 import { FiLogOut } from 'react-icons/fi';
+import Logo from '/rpm.svg?url';
 import useAuth from '../../auth/hooks/useAuth';
 import useLayout from '../hooks/useLayout'
 import {
@@ -51,7 +52,7 @@ function NavbarComponent({ fixed = false, isAuthenticated }) {
 
                     {/* Logo e nome da aplicação */}
                     <NavbarBrand href="/">
-                        <img src="/rpm.svg" className="mr-3 h-8" alt="Remessas Portal Monkey" />
+                        <img src={Logo} className="mr-3 h-8" alt="Remessas Portal Monkey" />
                         <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white"></span>
                     </NavbarBrand>
 

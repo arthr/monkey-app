@@ -1,5 +1,6 @@
 import React from "react";
 import useAuth from '../hooks/useAuth';
+import Logo from '/rpm.svg?url';
 
 const Login = () => {
     const auth = useAuth();
@@ -7,7 +8,7 @@ const Login = () => {
     return (
         <div className="px-6 py-8 mx-auto lg:py-0">
             <a href="./" className="flex justify-center mb-2 text-2xl font-semibold text-gray-900">
-                <img src="rpm.svg" width={260} height={160} className="mb-2" />
+                <img src={Logo} width={260} height={160} className="mb-2" />
             </a>
             <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
                 <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
