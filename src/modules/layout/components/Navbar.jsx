@@ -104,8 +104,8 @@ function NavbarComponent({ fixed = false, isAuthenticated }) {
                                 <span className="block text-sm">{user?.profile?.name || 'Visitante'}</span>
                                 <span className="block truncate text-sm font-medium">{user?.profile?.email || 'usuario@diretacapital.com.br' }</span>
                             </DropdownHeader>
-                            <DropdownItem onClick={() => navigate('/profile')}>Meu Perfil</DropdownItem>
-                            <DropdownItem onClick={() => navigate('/settings')}>Configurações</DropdownItem>
+                            {/* <DropdownItem onClick={() => navigate('/profile')}>Meu Perfil</DropdownItem> */}
+                            {/* <DropdownItem onClick={() => navigate('/settings')}>Configurações</DropdownItem> */}
                             <DropdownDivider />
                             <DropdownItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
                                 <div className="flex items-center gap-2">
