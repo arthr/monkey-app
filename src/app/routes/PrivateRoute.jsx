@@ -10,7 +10,7 @@ function PrivateRoute() {
     }
 
     if (!isLogged) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     return (
