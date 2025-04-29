@@ -9,7 +9,7 @@ const cognitoAuthConfig = {
     redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI || window.location.origin,
     response_type: import.meta.env.VITE_COGNITO_RESPONSE_TYPE || "code",
     scope: import.meta.env.VITE_COGNITO_SCOPE || "email openid profile",
-    //post_logout_redirect_uri: import.meta.env.VITE_COGNITO_LOGOUT_URI || window.location.origin,
+    post_logout_redirect_uri: import.meta.env.VITE_COGNITO_LOGOUT_URI || window.location.origin,
     //silent_redirect_uri: window.location.origin + "/silent-renew.html",
     onSigninCallback: () => window.history.replaceState({}, document.title, window.location.pathname),
     userStore: new WebStorageStateStore({ store: window.localStorage }),
