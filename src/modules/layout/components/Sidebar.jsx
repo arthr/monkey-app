@@ -31,9 +31,9 @@ function SidebarComponent() {
                                 <SidebarItem
                                     key={1}
                                     as={Link}
-                                    to="/remessas" // Caminho relativo gerenciado pelo React Router
+                                    to="/" // Caminho relativo gerenciado pelo React Router
                                     icon={FaRegFileAlt}
-                                    active={pathname === "/remessas"}
+                                    active={pathname === "/"}
                                 >
                                     Remessas
                                 </SidebarItem>

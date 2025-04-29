@@ -170,7 +170,7 @@ const RemessaTable = ({ remessas, loading }) => {
                                 <TableCell className="text-center">{remessa.titulos?.length || 0}</TableCell>
                                 <TableCell className="text-right font-medium">{calcularValorTotal(remessa)}</TableCell>
                                 <TableCell className="text-center">
-                                    <Link to={`/remessas/${remessa.filename}`} className="text-blue-700 hover:underline">
+                                    <Link to={`/detalhes/${remessa.filename}`} className="text-blue-700 hover:underline">
                                         Ver Detalhes
                                     </Link>
                                 </TableCell>

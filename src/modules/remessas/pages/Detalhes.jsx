@@ -58,7 +58,7 @@ const Detalhes = () => {
                     <span className="font-medium">Erro!</span> {error}
                 </Alert>
                 <div className="mt-4">
-                    <Link to="/remessas">
+                    <Link to="/">
                         <Button color="gray">
                             <FiArrowLeft className="mr-2" />
                             Voltar para a lista
@@ -76,7 +76,7 @@ const Detalhes = () => {
                     <span className="font-medium">Informação:</span> Remessa não encontrada.
                 </Alert>
                 <div className="mt-4">
-                    <Link to="/remessas">
+                    <Link to="/">
                         <Button color="gray">
                             <FiArrowLeft className="mr-2" />
                             Voltar para a lista
@@ -97,7 +97,7 @@ const Detalhes = () => {
 
                 {/* Botões de ação no topo */}
                 <div className="w-full flex flex-col sm:flex-row justify-between gap-4 mb-6">
-                    <Link to="/remessas">
+                    <Link to="/">
                         <Button outline color="gray">
                             <FiArrowLeft className="mr-2" />
                             Voltar

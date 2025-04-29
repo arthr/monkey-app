@@ -6,5 +6,5 @@ import Detalhes from "./pages/Detalhes";
 
 export const remessasRoutes = [
     <Route path="/" element={<Listar />} key="remessas-list" />,
-    <Route path="/:filename" element={<Detalhes />} key="remessas-detail" />,
+    <Route path="/detalhes/:filename" element={<Detalhes />} key="remessas-detail" />,
 ];
