@@ -2,9 +2,6 @@ import axios from 'axios';
 
 const remessaApi = axios.create({
     baseURL: import.meta.env.VITE_API_GATEWAY_URL,
-    headers: {
-        'Origin': '*',
-    },
 });
 
 // Listar todas as remessas (opcional com filtro de data)
