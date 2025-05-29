@@ -24,3 +24,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Arquivos de Exemplo
+sample_files/
+
+# Cursor Directory
+.cursor/
