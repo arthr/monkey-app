@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { processarTextoParaPdf, quebrarTextoParaPdf, contarLinhasPdf } from '../utils/textUtils';
 
 /**
  * Serviço para gerar PDF a partir dos dados da NFe
@@ -12,6 +13,7 @@ class NfePdfGenerator {
         this.currentY = this.margin;
         this.maxY = this.pageHeight - 20; // Altura máxima da página (deixando espaço para rodapé)
         this.pdf = null;
+        this.caracteresLargura = 80; // Caracteres por linha no PDF
     }
 
     /**
@@ -47,6 +49,9 @@ class NfePdfGenerator {
 
             // Informações financeiras
             this.adicionarFinanceiro(nfeData);
+
+            // Informações complementares
+            this.adicionarInformacoesComplementares(nfeData);
 
             // Rodapé em todas as páginas
             this.adicionarRodapeTodasPaginas();
@@ -403,6 +408,50 @@ class NfePdfGenerator {
                 this.currentY += 4;
             });
         }
+
+        this.currentY += 5;
+    }
+
+    /**
+     * Adiciona informações complementares com processamento de texto melhorado
+     */
+    adicionarInformacoesComplementares(nfeData) {
+        const informacoes = nfeData.informacoesAdicionais?.informacoesComplementares;
+        if (!informacoes) return;
+
+        // Processar o texto removendo HTML e formatando adequadamente
+        const textoProcessado = processarTextoParaPdf(informacoes);
+        if (!textoProcessado.trim()) return;
+
+        // Contar quantas linhas serão necessárias
+        const linhasNecessarias = contarLinhasPdf(textoProcessado, this.caracteresLargura);
+        const espacoNecessario = Math.min(linhasNecessarias * 4 + 20, 60); // Limitar espaço máximo
+
+        this.verificarNovaPagina(espacoNecessario);
+
+        this.pdf.setFontSize(12);
+        this.pdf.setFont('helvetica', 'bold');
+        this.pdf.text('INFORMAÇÕES COMPLEMENTARES', this.margin, this.currentY);
+        this.currentY += 8;
+
+        this.pdf.setFontSize(8);
+        this.pdf.setFont('helvetica', 'normal');
+
+        // Quebrar o texto em linhas adequadas para o PDF
+        const linhas = quebrarTextoParaPdf(textoProcessado, this.caracteresLargura);
+
+        linhas.forEach(linha => {
+            this.verificarNovaPagina(5);
+            
+            if (linha.trim() === '') {
+                // Linha vazia - adicionar espaço menor
+                this.currentY += 2;
+            } else {
+                // Linha com conteúdo
+                this.pdf.text(linha, this.margin, this.currentY);
+                this.currentY += 4;
+            }
+        });
 
         this.currentY += 5;
     }

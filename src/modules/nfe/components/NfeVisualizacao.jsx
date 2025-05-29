@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Card, Table, TableHead, TableRow, TableBody, TableCell, TableHeadCell, Badge } from 'flowbite-react';
-import { FiInfo, FiUser, FiTruck, FiFileText, FiDollarSign } from 'react-icons/fi';
+import { FiInfo, FiUser, FiTruck, FiFileText, FiDollarSign, FiCode } from 'react-icons/fi';
 import NfeAcoes from './NfeAcoes';
+import { processarTextoParaWeb, contemHtml } from '../utils/textUtils';
 
 const NfeVisualizacao = ({ nfeData }) => {
     const [abaSelecionada, setAbaSelecionada] = useState('geral');
+    const [mostrarHtmlBruto, setMostrarHtmlBruto] = useState(false);
 
     if (!nfeData) {
         return null;
@@ -42,6 +44,64 @@ const NfeVisualizacao = ({ nfeData }) => {
         { id: 'transporte', nome: 'Transporte', icon: FiTruck },
         { id: 'financeiro', nome: 'Financeiro', icon: FiDollarSign }
     ];
+
+    // Componente para exibir informações complementares
+    const InformacoesComplementares = ({ texto }) => {
+        if (!texto) return null;
+
+        const temHtml = contemHtml(texto);
+        const textoProcessado = processarTextoParaWeb(texto);
+
+        return (
+            <div className="space-y-3">
+                {/* Cabeçalho com opções */}
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Informações Complementares
+                    </h3>
+                    {temHtml && (
+                        <button
+                            onClick={() => setMostrarHtmlBruto(!mostrarHtmlBruto)}
+                            className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                            title={mostrarHtmlBruto ? "Mostrar formatado" : "Mostrar código HTML"}
+                        >
+                            <FiCode className="w-3 h-3" />
+                            <span>{mostrarHtmlBruto ? "Formatado" : "HTML"}</span>
+                        </button>
+                    )}
+                </div>
+
+                {/* Conteúdo */}
+                <div className={`rounded-lg p-4 ${temHtml ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-700'}`}>
+                    {mostrarHtmlBruto ? (
+                        // Exibir código HTML bruto
+                        <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap overflow-x-auto">
+                            <code>{texto}</code>
+                        </pre>
+                    ) : (
+                        // Exibir conteúdo formatado
+                        <div 
+                            className="text-sm text-gray-900 dark:text-white leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: textoProcessado }}
+                            style={{
+                                // Estilos CSS para melhorar a formatação do HTML interno
+                                wordBreak: 'break-word',
+                                hyphens: 'auto'
+                            }}
+                        />
+                    )}
+                </div>
+
+                {/* Indicador de conteúdo HTML */}
+                {temHtml && !mostrarHtmlBruto && (
+                    <div className="flex items-center space-x-2 text-xs text-blue-600 dark:text-blue-400">
+                        <FiInfo className="w-3 h-3" />
+                        <span>Este conteúdo contém formatação HTML</span>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <div className="space-y-6">
@@ -462,17 +522,12 @@ const NfeVisualizacao = ({ nfeData }) => {
                         </Card>
                     )}
 
-                    {/* Informações Adicionais */}
+                    {/* Informações Complementares com processamento melhorado */}
                     {nfeData.informacoesAdicionais?.informacoesComplementares && (
                         <Card>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                Informações Complementares
-                            </h3>
-                            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                                <p className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
-                                    {nfeData.informacoesAdicionais.informacoesComplementares}
-                                </p>
-                            </div>
+                            <InformacoesComplementares 
+                                texto={nfeData.informacoesAdicionais.informacoesComplementares} 
+                            />
                         </Card>
                     )}
                 </div>

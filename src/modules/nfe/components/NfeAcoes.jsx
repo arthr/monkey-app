@@ -81,14 +81,14 @@ const NfeAcoes = ({ nfeData, className = '' }) => {
     if (!nfeData) return null;
 
     return (
-        <div className={`flex items-center space-x-2 ${className}`}>
+        <div className={`flex items-center ${className}`}>
             {/* Botão principal - Gerar PDF */}
             <Button
                 color="blue"
                 size="sm"
                 onClick={handleGerarPdf}
                 disabled={gerandoPdf}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 mr-2 cursor-pointer"
             >
                 {gerandoPdf ? (
                     <>
@@ -107,16 +107,8 @@ const NfeAcoes = ({ nfeData, className = '' }) => {
             <Dropdown
                 arrowIcon={false}
                 inline
-                label={
-                    <Button
-                        color="gray"
-                        size="sm"
-                        className="p-2"
-                        title="Mais ações"
-                    >
-                        <FiMoreVertical className="w-4 h-4" />
-                    </Button>
-                }
+                label={<FiMoreVertical className="w-4 h-4 cursor-pointer hover:text-blue-700" />}
+                placement="bottom-end"
             >
                 <DropdownItem
                     onClick={handleBaixarJson}
