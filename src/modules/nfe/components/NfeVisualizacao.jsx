@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Table, TableHead, TableRow, TableBody, TableCell, TableHeadCell, Badge } from 'flowbite-react';
 import { FiInfo, FiUser, FiTruck, FiFileText, FiDollarSign } from 'react-icons/fi';
+import NfeAcoes from './NfeAcoes';
 
 const NfeVisualizacao = ({ nfeData }) => {
     const [abaSelecionada, setAbaSelecionada] = useState('geral');
@@ -57,9 +58,12 @@ const NfeVisualizacao = ({ nfeData }) => {
                             <Badge color="green">Autorizada</Badge>
                         </div>
                     </div>
-                    <div className="text-right text-sm text-gray-600 dark:text-gray-400">
-                        <p>Data de Emissão: <strong>{nfeData.identificacao?.dataEmissao || 'N/A'}</strong></p>
-                        <p>Data de Saída: <strong>{nfeData.identificacao?.dataSaida || 'N/A'}</strong></p>
+                    <div className="flex flex-col items-end space-y-3">
+                        <div className="text-right text-sm text-gray-600 dark:text-gray-400">
+                            <p>Data de Emissão: <strong>{nfeData.identificacao?.dataEmissao || 'N/A'}</strong></p>
+                            <p>Data de Saída: <strong>{nfeData.identificacao?.dataSaida || 'N/A'}</strong></p>
+                        </div>
+                        <NfeAcoes nfeData={nfeData} />
                     </div>
                 </div>
             </Card>

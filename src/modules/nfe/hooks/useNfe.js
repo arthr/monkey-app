@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import xmlParser from '../services/xmlParser';
+import pdfGenerator from '../services/pdfGenerator';
 
 /**
  * Hook personalizado para gerenciar o estado e operações do módulo NFe
@@ -9,6 +10,7 @@ export const useNfe = () => {
     const [error, setError] = useState(null);
     const [nfeData, setNfeData] = useState(null);
     const [uploadHistory, setUploadHistory] = useState([]);
+    const [gerandoPdf, setGerandoPdf] = useState(false);
 
     /**
      * Processa um arquivo XML de NFe
@@ -53,6 +55,29 @@ export const useNfe = () => {
             setLoading(false);
         }
     }, []);
+
+    /**
+     * Gera PDF a partir dos dados da NFe atual
+     * @returns {Promise<void>}
+     */
+    const gerarPdf = useCallback(async () => {
+        if (!nfeData) {
+            throw new Error('Nenhum dado de NFe disponível para gerar PDF');
+        }
+
+        setGerandoPdf(true);
+        setError(null);
+
+        try {
+            await pdfGenerator.gerarPdf(nfeData);
+        } catch (err) {
+            const mensagemErro = err.message || 'Erro ao gerar PDF';
+            setError(mensagemErro);
+            throw new Error(mensagemErro);
+        } finally {
+            setGerandoPdf(false);
+        }
+    }, [nfeData]);
 
     /**
      * Limpa os dados atuais da NFe
@@ -120,24 +145,50 @@ export const useNfe = () => {
         return JSON.stringify(nfeData, null, 2);
     }, [nfeData]);
 
+    /**
+     * Baixa os dados da NFe em formato JSON
+     */
+    const baixarJson = useCallback(() => {
+        try {
+            const jsonData = exportarDados();
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `nfe-${nfeData?.identificacao?.numero || 'dados'}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (error) {
+            throw new Error('Erro ao baixar arquivo JSON: ' + error.message);
+        }
+    }, [nfeData, exportarDados]);
+
     return {
         // Estado
         loading,
         error,
         nfeData,
         uploadHistory,
+        gerandoPdf,
         
         // Ações
         processarArquivo,
+        gerarPdf,
         limparDados,
         limparHistorico,
         removerDoHistorico,
         validarArquivo,
         exportarDados,
+        baixarJson,
         
         // Computadas
         temDados: !!nfeData,
-        temHistorico: uploadHistory.length > 0
+        temHistorico: uploadHistory.length > 0,
+        podeFiltrarPdf: !!nfeData && !gerandoPdf
     };
 };
 
