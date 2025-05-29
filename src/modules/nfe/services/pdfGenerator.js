@@ -8,7 +8,7 @@ class NfePdfGenerator {
     constructor() {
         this.pageWidth = 210; // A4 width in mm
         this.pageHeight = 297; // A4 height in mm
-        this.margin = 15;
+        this.margin = 10;
         this.contentWidth = this.pageWidth - (this.margin * 2);
         this.currentY = this.margin;
         this.maxY = this.pageHeight - 20; // Altura máxima da página (deixando espaço para rodapé)
@@ -87,27 +87,46 @@ class NfePdfGenerator {
      * Adiciona cabeçalho do documento
      */
     adicionarCabecalho(nfeData) {
+        // Linha separadora
+        this.pdf.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
+        this.currentY += 8;
+
         // Título principal
-        this.pdf.setFontSize(20);
+        this.pdf.setFontSize(16);
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text('NOTA FISCAL ELETRÔNICA', this.pageWidth / 2, this.currentY, { align: 'center' });
-        this.currentY += 10;
+        this.currentY += 6;
 
         // Número e série
-        this.pdf.setFontSize(14);
+        this.pdf.setFontSize(12);
         const numeroSerie = `Nº ${nfeData.identificacao?.numero || 'N/A'} - Série ${nfeData.identificacao?.serie || 'N/A'}`;
         this.pdf.text(numeroSerie, this.pageWidth / 2, this.currentY, { align: 'center' });
-        this.currentY += 8;
+        this.currentY += 6;
+
+        // Linha separadora
+        this.pdf.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
+        this.currentY += 4;
+
+        // Chave de acesso
+        this.pdf.setFontSize(10);
+        this.pdf.setFont('helvetica', 'bold');
+        this.pdf.text('Chave de Acesso', this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.currentY += 4;
 
         // Chave de acesso
         this.pdf.setFontSize(10);
         this.pdf.setFont('helvetica', 'normal');
-        this.pdf.text(`Chave de Acesso: ${nfeData.identificacao?.chaveAcesso || 'N/A'}`, this.pageWidth / 2, this.currentY, { align: 'center' });
-        this.currentY += 12;
+        this.pdf.text(`${nfeData.identificacao?.chaveAcesso || 'N/A'}`, this.pageWidth / 2, this.currentY, { align: 'center' });
+        this.currentY += 2;
 
         // Linha separadora
         this.pdf.line(this.margin, this.currentY, this.pageWidth - this.margin, this.currentY);
         this.currentY += 8;
+
+        // Linha vertical para delimitar o cabeçalho
+        // Linha vertical para delimitar o cabeçalho
+        this.pdf.line(this.margin, this.currentY - 8, this.margin, this.currentY - 38);
+        this.pdf.line(this.pageWidth - this.margin, this.currentY - 8, this.pageWidth - this.margin, this.currentY - 38);
     }
 
     /**
@@ -227,11 +246,11 @@ class NfePdfGenerator {
         this.pdf.setFontSize(12);
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text('ITENS DA NOTA FISCAL', this.margin, this.currentY);
-        this.currentY += 8;
+        this.currentY += 4;
 
         // Cabeçalho da tabela
         const colunas = ['Item', 'Código', 'Descrição', 'Qtd', 'Un', 'Vl. Unit', 'Vl. Total'];
-        const larguras = [15, 25, 60, 15, 10, 25, 25];
+        const larguras = [15, 20, 75, 10, 10, 30, 30];
 
         // Função para desenhar cabeçalho da tabela
         const desenharCabecalho = () => {
@@ -246,15 +265,17 @@ class NfePdfGenerator {
             });
 
             this.currentY += 6;
+            // Linhas da tabela
+            this.pdf.setFont('helvetica', 'normal');
         };
 
         // Desenhar cabeçalho inicial
         desenharCabecalho();
 
-        // Linhas da tabela
-        this.pdf.setFont('helvetica', 'normal');
-        
         nfeData.itens.forEach((item, index) => {
+            // Linhas da tabela
+            this.pdf.setFont('helvetica', 'normal');
+
             // Verificar se precisa de nova página (considerando altura da linha + margem de segurança)
             if (this.currentY + 10 > this.maxY) {
                 this.pdf.addPage();
@@ -293,7 +314,7 @@ class NfePdfGenerator {
 
         this.verificarNovaPagina(40);
 
-        this.pdf.setFontSize(12);
+        this.pdf.setFontSize(10);
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text('TOTAIS DA NOTA FISCAL', this.margin, this.currentY);
         this.currentY += 6;
@@ -314,10 +335,12 @@ class NfePdfGenerator {
             this.currentY += 4;
         });
 
+        this.currentY += 2;
+
         // Total geral destacado
         this.verificarNovaPagina(8);
         this.pdf.setFont('helvetica', 'bold');
-        this.pdf.setFontSize(11);
+        this.pdf.setFontSize(9);
         this.pdf.text(`VALOR TOTAL DA NFe: ${this.formatarMoeda(nfeData.totais.valorTotalNfe)}`, this.margin, this.currentY);
         this.currentY += 8;
     }
@@ -330,7 +353,7 @@ class NfePdfGenerator {
 
         this.verificarNovaPagina(40);
 
-        this.pdf.setFontSize(12);
+        this.pdf.setFontSize(10);
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text('DADOS DE TRANSPORTE', this.margin, this.currentY);
         this.currentY += 6;
@@ -360,7 +383,7 @@ class NfePdfGenerator {
             });
         }
 
-        this.currentY += 5;
+        this.currentY += 4;
     }
 
     /**
@@ -371,10 +394,10 @@ class NfePdfGenerator {
 
         this.verificarNovaPagina(40);
 
-        this.pdf.setFontSize(12);
+        this.pdf.setFontSize(10);
         this.pdf.setFont('helvetica', 'bold');
         this.pdf.text('DADOS FINANCEIROS', this.margin, this.currentY);
-        this.currentY += 6;
+        this.currentY += 4;
 
         this.pdf.setFontSize(9);
         this.pdf.setFont('helvetica', 'normal');
