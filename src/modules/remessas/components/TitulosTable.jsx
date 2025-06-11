@@ -68,7 +68,7 @@ const TitulosTable = ({ titulos = [] }) => {
                                     <TableCell>{titulo.sacadorAvalista || 'N/A'}</TableCell>
                                     <TableCell className="text-right font-medium text-gray-900 dark:text-white">{formatarMoeda(titulo.valorTitulo)}</TableCell>
                                     <TableCell className="text-center">{formatarData(titulo.vencimento)}</TableCell>
-                                    <TableCell className="flex gap-2">
+                                    <TableCell className="text-left">
                                         {titulo.nomePagador || 'N/A'}
                                     </TableCell>
                                     <TableCell className="max-w-md truncate">
