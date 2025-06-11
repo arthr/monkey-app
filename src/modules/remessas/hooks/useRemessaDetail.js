@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getRemessa, getRemessaUrl, getRetornoUrl } from '../services/remessaApi';
+import { getRemessa, getRemessaUrl, getRetornoUrl, corrigirEspecie, getRemessaCorrigidaUrl } from '../services/remessaApi';
 
 const useRemessaDetail = (filename) => {
     const [remessa, setRemessa] = useState(null);
@@ -8,8 +8,11 @@ const useRemessaDetail = (filename) => {
 
     const [downloadingRemessa, setDownloadingRemessa] = useState(false);
     const [downloadingRetorno, setDownloadingRetorno] = useState(false);
+    const [downloadingCorrigida, setDownloadingCorrigida] = useState(false);
+    const [gerandoCorrigida, setGerandoCorrigida] = useState(false);
     const [remessaUrl, setRemessaUrl] = useState(null);
     const [retornoUrl, setRetornoUrl] = useState(null);
+    const [remessaCorrigidaUrl, setRemessaCorrigidaUrl] = useState(null);
 
     const fetchRemessa = async () => {
         if (!filename) return;
@@ -72,17 +75,59 @@ const useRemessaDetail = (filename) => {
         }
     }
 
+    const gerarCnabCorrigido = async () => {
+        if (!remessa?.filename || !remessa?.timestamp) return;
+
+        setGerandoCorrigida(true);
+        try {
+            await corrigirEspecie(remessa.filename, remessa.timestamp);
+            
+            // Aguarda um delay para a Lambda processar
+            setTimeout(() => {
+                refreshRemessa();
+                setGerandoCorrigida(false);
+            }, 3000);
+            
+            setError(null);
+        } catch (err) {
+            console.error("Erro ao gerar CNAB corrigido: ", err);
+            setError(`Erro ao gerar CNAB corrigido: ${err.message || 'Tente novamente mais tarde'}`);
+            setGerandoCorrigida(false);
+        }
+    }
+
+    const fetchRemessaCorrigidaUrl = async (filename, timestamp) => {
+        if (!filename || !timestamp) return;
+
+        setDownloadingCorrigida(true);
+        try {
+            const response = await getRemessaCorrigidaUrl(filename, timestamp);
+            setRemessaCorrigidaUrl(response.data?.link);
+            setError(null);
+        } catch (err) {
+            console.error("Erro ao obter url da remessa corrigida: ", err);
+            setError(`Erro ao obter url da remessa corrigida: ${err.message || 'Tente novamente mais tarde'}`);
+        } finally {
+            setDownloadingCorrigida(false);
+        }
+    }
+
     return {
         remessa,
         loading,
         error,
         downloadingRemessa,
         downloadingRetorno,
+        downloadingCorrigida,
+        gerandoCorrigida,
         remessaUrl,
         retornoUrl,
+        remessaCorrigidaUrl,
         refreshRemessa,
         fetchRemessaUrl,
         fetchRetornoUrl,
+        gerarCnabCorrigido,
+        fetchRemessaCorrigidaUrl,
     };
 };
 

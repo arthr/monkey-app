@@ -42,4 +42,14 @@ export const getRetornoUrl = (filename) => {
     return remessaApi.get(`/retornos/${filename}/download`);
 };
 
+// Corrigir espécie de título baseada no tipo de documento fiscal
+export const corrigirEspecie = (filename, timestamp) => {
+    return remessaApi.post(`/remessas/${filename}/${timestamp}/corrigir-especie`);
+};
+
+// Obter signed URL para download do arquivo de remessa corrigido
+export const getRemessaCorrigidaUrl = (filename, timestamp) => {
+    return remessaApi.get(`/remessas/${filename}/${timestamp}/download-corrigida`);
+};
+
 export default remessaApi;

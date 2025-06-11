@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button, Alert, Badge, Modal, Spinner, ModalBody, ModalHeader } from "flowbite-react";
-import { FiArrowLeft, FiCheck, FiDownload, FiAlertCircle, FiInfo } from "react-icons/fi";
+import { FiArrowLeft, FiCheck, FiDownload, FiAlertCircle, FiInfo, FiSettings } from "react-icons/fi";
 
 // Components
 import DetailCard from "../components/DetailCard";
@@ -17,9 +17,9 @@ const Detalhes = () => {
     const { filename } = useParams();
     const {
         remessa, loading, error,
-        downloadingRemessa, downloadingRetorno,
-        remessaUrl, retornoUrl,
-        refreshRemessa, fetchRemessaUrl, fetchRetornoUrl
+        downloadingRemessa, downloadingRetorno, downloadingCorrigida, gerandoCorrigida,
+        remessaUrl, retornoUrl, remessaCorrigidaUrl,
+        refreshRemessa, fetchRemessaUrl, fetchRetornoUrl, gerarCnabCorrigido, fetchRemessaCorrigidaUrl
     } = useRemessaDetail(filename);
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -34,6 +34,12 @@ const Detalhes = () => {
             window.open(retornoUrl, "_blank");
         }
     }, [retornoUrl]);
+
+    useEffect(() => {
+        if (remessaCorrigidaUrl) {
+            window.open(remessaCorrigidaUrl, "_blank");
+        }
+    }, [remessaCorrigidaUrl]);
 
     // Função para calcular o valor total dos títulos
     const calcularValorTotal = () => {
@@ -132,6 +138,37 @@ const Detalhes = () => {
                                     <>
                                         <FiDownload className="mr-2" />
                                         Baixar Arquivo de Retorno
+                                    </>
+                                )}
+                            </Button>
+                        )}
+
+                        {/* Botão para gerar/baixar CNAB corrigido */}
+                        {remessa.arquivoCorrigido ? (
+                            <Button outline color="purple" onClick={async () => fetchRemessaCorrigidaUrl(remessa.filename, remessa.timestamp)} disabled={downloadingCorrigida}>
+                                {downloadingCorrigida ? (
+                                    <>
+                                        <Spinner className="mr-2 size-5" />
+                                        Gerando link...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiDownload className="mr-2" />
+                                        Baixar CNAB Corrigido (WBA)
+                                    </>
+                                )}
+                            </Button>
+                        ) : (
+                            <Button outline color="purple" onClick={gerarCnabCorrigido} disabled={gerandoCorrigida}>
+                                {gerandoCorrigida ? (
+                                    <>
+                                        <Spinner className="mr-2 size-5" />
+                                        Gerando arquivo...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiSettings className="mr-2" />
+                                        Gerar CNAB Corrigido (WBA)
                                     </>
                                 )}
                             </Button>
