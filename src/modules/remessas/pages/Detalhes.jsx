@@ -8,6 +8,7 @@ import DetailCard from "../components/DetailCard";
 import TitulosTable from "../components/TitulosTable";
 import AprovarReprovar from "../components/AprovarReprovar";
 import Loader from "../components/Loader";
+import NFeValidationCard from "../components/NFeValidationCard";
 
 // Hooks
 import useRemessaDetail from "../hooks/useRemessaDetail";
@@ -155,25 +156,25 @@ const Detalhes = () => {
                 </div>
 
                 {/* Cards com informações da remessa */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mb-6">
                     {/* Sacado/Cedente */}
                     <DetailCard title="Sacado/Cedente">
                         <ul className="space-y-2">
                             <li className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Sacado:</span>
-                                <span className="font-medium">{remessa.header?.nomeEmpresa || "N/D"}</span>
+                                <span className="font-medium text-right">{remessa.header?.nomeEmpresa || "N/D"}</span>
                             </li>
                             <li className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">CNPJ:</span>
-                                <span className="font-medium">{remessa.titulos[0]?.numeroInscricaoPagador || "N/D"}</span>
+                                <span className="font-medium text-right">{remessa.titulos[0]?.numeroInscricaoPagador || "N/D"}</span>
                             </li>
                             <li className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">Cedente:</span>
-                                <span className="font-medium">{remessa.titulos[0]?.sacadorAvalista || "N/D"}</span>
+                                <span className="font-medium text-right">{remessa.titulos[0]?.sacadorAvalista || "N/D"}</span>
                             </li>
                             <li className="flex justify-between">
                                 <span className="text-gray-500 dark:text-gray-400">CNPJ:</span>
-                                <span className="font-medium">{remessa.titulos[0]?.numeroInscricao || "N/D"}</span>
+                                <span className="font-medium text-right">{remessa.titulos[0]?.numeroInscricao || "N/D"}</span>
                             </li>
                         </ul>
                     </DetailCard>
@@ -225,6 +226,11 @@ const Detalhes = () => {
                             </li>
                         </ul>
                     </DetailCard>
+                </div>
+
+                {/* Validação NFe */}
+                <div className="w-full mb-6">
+                    <NFeValidationCard remessa={remessa} />
                 </div>
 
                 {/* Tabela de títulos */}

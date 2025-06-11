@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Badge, TextInput, TableHead, TableHeadCell, TableBody, TableRow, TableCell, Pagination, Card } from 'flowbite-react';
 import { FiX, FiSearch } from 'react-icons/fi';
+import NFeValidationBadge from './NFeValidationBadge';
 
-const RemessaTable = ({ remessas, loading }) => {
+const RemessaTable = ({ remessas }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
     const [sortColumn, setSortColumn] = useState('timestamp');
@@ -148,6 +149,7 @@ const RemessaTable = ({ remessas, loading }) => {
                             >
                                 Valor Total {sortColumn === 'valorTotal' && (sortOrder === 'asc' ? '↑' : '↓')}
                             </TableHeadCell>
+                            <TableHeadCell className="text-center">Documentos</TableHeadCell>
                             <TableHeadCell className="text-center">Ações</TableHeadCell>
                         </TableRow>
                     </TableHead>
@@ -157,7 +159,8 @@ const RemessaTable = ({ remessas, loading }) => {
                                 <TableCell className="font-medium">{remessa.titulos?.[0]?.sacadorAvalista || 'N/D'}</TableCell>
                                 <TableCell>{remessa.filename}</TableCell>
                                 <TableCell className="text-center">{remessa.situacao?.usuario || 'N/D'}</TableCell>
-                                <TableCell className="flex justify-center">
+                                <TableCell>
+                                    <div className="grid place-items-center">
                                     {remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
                                         <Badge color="success">Aprovada</Badge>
                                     ) : !remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
@@ -165,10 +168,16 @@ const RemessaTable = ({ remessas, loading }) => {
                                     ) : (
                                         <Badge color="warning">Pendente</Badge>
                                     )}
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-center">{new Date(remessa.timestamp).toLocaleString()}</TableCell>
                                 <TableCell className="text-center">{remessa.titulos?.length || 0}</TableCell>
                                 <TableCell className="text-right font-medium">{calcularValorTotal(remessa)}</TableCell>
+                                <TableCell>
+                                    <div className="grid place-items-center">
+                                        <NFeValidationBadge remessa={remessa} />
+                                    </div>
+                                </TableCell>
                                 <TableCell className="text-center">
                                     <Link to={`/detalhes/${remessa.filename}`} className="text-blue-700 hover:underline">
                                         Ver Detalhes

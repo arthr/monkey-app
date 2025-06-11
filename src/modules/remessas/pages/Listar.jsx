@@ -1,5 +1,5 @@
 import React from "react";
-import useAuth from '../../auth/hooks/useAuth';
+// import useAuth from '../../auth/hooks/useAuth';
 import useRemessas from '../hooks/useRemessas';
 import RemessaTable from '../components/RemessaTable';
 import Loader from '../components/Loader';
@@ -8,9 +8,9 @@ import { Alert } from 'flowbite-react';
 import { FiInfo, FiAlertCircle } from 'react-icons/fi';
 
 const Listar = () => {
-    const auth = useAuth();
-    const { user } = auth;
-    const { profile } = user || {};
+    // const auth = useAuth();
+    // const { user } = auth;
+    // const { profile } = user || {};
 
     const {
         remessas,
@@ -54,7 +54,6 @@ const Listar = () => {
                 ) : (
                     <RemessaTable
                         remessas={remessas}
-                        loading={loading}
                     />
                 )}
             </div>

@@ -55,7 +55,7 @@ const TitulosTable = ({ titulos = [] }) => {
                             <TableHeadCell className="text-center">Vencimento</TableHeadCell>
                             <TableHeadCell>Pagador (Sacado)</TableHeadCell>
                             <TableHeadCell>Endereço do Pagador</TableHeadCell>
-                            <TableHeadCell className="text-center">Chave NF-e</TableHeadCell>
+                            <TableHeadCell className="text-center">Chave Documento</TableHeadCell>
                         </TableRow>
                     </TableHead>
                     <TableBody className="divide-y">
@@ -109,7 +109,7 @@ const TitulosTable = ({ titulos = [] }) => {
             <Modal
                 show={modalAberto}
                 onClose={() => setModalAberto(false)}
-                size="md"
+                size="xl"
                 dismissible
             >
                 <ModalHeader>
