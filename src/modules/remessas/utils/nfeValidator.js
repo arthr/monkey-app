@@ -110,7 +110,7 @@ const validarSerie = (serie) => {
         return false;
     }
     const serieNum = parseInt(serie);
-    return serieNum >= 1 && serieNum <= 999;
+    return serieNum >= 0 && serieNum <= 999;
 };
 
 /**
