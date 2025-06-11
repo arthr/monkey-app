@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, Badge, Button, Modal, ModalHeader, ModalBody, Table, TableHead, TableHeadCell, TableBody, TableRow, TableCell } from 'flowbite-react';
 import { FiCheck, FiX, FiAlertTriangle, FiInfo, FiEye, FiFileText, FiTruck } from 'react-icons/fi';
 import { validarChavesRemessa, formatarChaveNFe } from '../utils/nfeValidator';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 const NFeValidationCard = ({ remessa }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -151,7 +152,13 @@ const NFeValidationCard = ({ remessa }) => {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="font-mono text-sm">
-                                                {detalhe.chave ? formatarChaveNFe(detalhe.chave) : '-'}
+                                                {detalhe.validacao?.tipoDocumento?.subtipo == 'NFe' ? (
+                                                    <a className="hover:underline text-blue-600 dark:text-blue-400" href={`https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ%20gAVw2g=&nfe=${detalhe.chave}`} target="_blank" rel="noopener noreferrer">
+                                                        {detalhe.chave ? formatarChaveNFe(detalhe.chave) : '-'}
+                                                    </a>
+                                                ) : (
+                                                    detalhe.chave ? formatarChaveNFe(detalhe.chave) : '-'
+                                                )}
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 {detalhe.validacao?.erros?.length > 0 ? (
