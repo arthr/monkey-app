@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Badge, TextInput, TableHead, TableHeadCell, TableBody, TableRow, TableCell, Pagination, Card } from 'flowbite-react';
+import { Table, Badge, TextInput, TableHead, TableHeadCell, TableBody, TableRow, TableCell, Pagination, Card, Select } from 'flowbite-react';
 import { FiX, FiSearch } from 'react-icons/fi';
 import NFeValidationBadge from './NFeValidationBadge';
+import { validarChavesRemessa } from '../utils/nfeValidator';
 
 const RemessaTable = ({ remessas }) => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -10,6 +11,11 @@ const RemessaTable = ({ remessas }) => {
     const [sortColumn, setSortColumn] = useState('timestamp');
     const [sortOrder, setSortOrder] = useState('asc');
     const [searchTerm, setSearchTerm] = useState('');
+    
+    // Novos estados para os filtros rápidos
+    const [documentFilter, setDocumentFilter] = useState('todos'); // todos, identificados, nao-identificados, sem-documentos
+    const [companyFilter, setCompanyFilter] = useState('todos'); // todos, FID, SEC
+    const [statusFilter, setStatusFilter] = useState('todos'); // todos, aprovada, reprovada, pendente
 
     // Função para calcular o valor total dos títulos
     const calcularValorTotal = (remessa, withLocale = true) => {
@@ -24,6 +30,24 @@ const RemessaTable = ({ remessas }) => {
             style: "currency",
             currency: "BRL",
         });
+    };
+
+    // Função para determinar o status de documentos de uma remessa
+    const getDocumentStatus = (remessa) => {
+        const validacao = validarChavesRemessa(remessa);
+        
+        if (validacao.totalTitulos === 0) return 'sem-titulos';
+        if (validacao.titulosComChave === 0) return 'sem-documentos';
+        if (validacao.chavesValidas === validacao.titulosComChave) return 'identificados';
+        if (validacao.chavesInvalidas > 0) return 'nao-identificados';
+        return 'parcial';
+    };
+
+    // Função para determinar o status da situação de uma remessa
+    const getSituacaoStatus = (remessa) => {
+        if (remessa.situacao?.aprovada && remessa.situacao?.timestamp) return 'aprovada';
+        if (!remessa.situacao?.aprovada && remessa.situacao?.timestamp) return 'reprovada';
+        return 'pendente';
     };
 
     // Função para ordenar as remessas
@@ -64,11 +88,34 @@ const RemessaTable = ({ remessas }) => {
         return 0;
     });
 
-    // Função de busca para filtrar as remessas
-    const filteredRemessas = sortedRemessas.filter(remessa =>
-        remessa.titulos?.[0]?.sacadorAvalista?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        remessa.filename.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Função de busca e filtros para filtrar as remessas
+    const filteredRemessas = sortedRemessas.filter(remessa => {
+        // Filtro de busca por texto
+        const matchesSearch = remessa.titulos?.[0]?.sacadorAvalista?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            remessa.filename.toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Filtro de documentos
+        let matchesDocumentFilter = true;
+        if (documentFilter !== 'todos') {
+            const docStatus = getDocumentStatus(remessa);
+            matchesDocumentFilter = docStatus === documentFilter;
+        }
+
+        // Filtro de empresa (companyPrefix)
+        let matchesCompanyFilter = true;
+        if (companyFilter !== 'todos') {
+            matchesCompanyFilter = remessa.companyPrefix === companyFilter;
+        }
+
+        // Filtro de situação
+        let matchesStatusFilter = true;
+        if (statusFilter !== 'todos') {
+            const situacaoStatus = getSituacaoStatus(remessa);
+            matchesStatusFilter = situacaoStatus === statusFilter;
+        }
+
+        return matchesSearch && matchesDocumentFilter && matchesCompanyFilter && matchesStatusFilter;
+    });
 
     // Cálculo dos itens da página atual
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -83,11 +130,20 @@ const RemessaTable = ({ remessas }) => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const resetSearch = () => setSearchTerm('');
+    
+    const resetFilters = () => {
+        setSearchTerm('');
+        setDocumentFilter('todos');
+        setCompanyFilter('todos');
+        setStatusFilter('todos');
+        setCurrentPage(1);
+    };
 
     return (
         <div className="w-full mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-                <div className="relative w-full md:w-1/3">
+            <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                {/* Campo de busca */}
+                <div className="relative flex-1">
                     <TextInput
                         type="text"
                         placeholder="Buscar por Cedente ou Arquivo..."
@@ -103,6 +159,54 @@ const RemessaTable = ({ remessas }) => {
                             className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
                         >
                             <FiX size={18} />
+                        </button>
+                    )}
+                </div>
+
+                {/* Filtros rápidos */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                    {/* Filtro de Documentos */}
+                    <Select
+                        value={documentFilter}
+                        onChange={(e) => setDocumentFilter(e.target.value)}
+                        className="min-w-[180px]"
+                    >
+                        <option value="todos">Todos os Documentos</option>
+                        <option value="identificados">Identificados</option>
+                        <option value="nao-identificados">Não Identificados</option>
+                        <option value="sem-documentos">Sem Documentos</option>
+                    </Select>
+
+                    {/* Filtro de Empresa */}
+                    <Select
+                        value={companyFilter}
+                        onChange={(e) => setCompanyFilter(e.target.value)}
+                        className="min-w-[150px]"
+                    >
+                        <option value="todos">Todas as Empresas</option>
+                        <option value="FID">FIDC</option>
+                        <option value="SEC">Securitizadora</option>
+                    </Select>
+
+                    {/* Filtro de Situação */}
+                    <Select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="min-w-[140px]"
+                    >
+                        <option value="todos">Todas as Situações</option>
+                        <option value="aprovada">Aprovada</option>
+                        <option value="reprovada">Reprovada</option>
+                        <option value="pendente">Pendente</option>
+                    </Select>
+
+                    {/* Botão para limpar filtros */}
+                    {(searchTerm || documentFilter !== 'todos' || companyFilter !== 'todos' || statusFilter !== 'todos') && (
+                        <button
+                            onClick={resetFilters}
+                            className="px-3 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 whitespace-nowrap"
+                        >
+                            Limpar Filtros
                         </button>
                     )}
                 </div>
