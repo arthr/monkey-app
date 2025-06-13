@@ -124,11 +124,13 @@ Identifica o tipo de documento fiscal baseado na chave.
 ## Tipos de Documento Suportados
 
 ### Chaves Eletrônicas (44 dígitos)
+
 - **NFe (Modelo 55)**: Nota Fiscal Eletrônica
 - **CTe (Modelo 57)**: Conhecimento de Transporte Eletrônico  
 - **NFCe (Modelo 65)**: Nota Fiscal de Consumidor Eletrônica
 
 ### Notas de Serviço (menos de 44 dígitos)
+
 - Qualquer documento com menos de 44 dígitos é considerado Nota de Serviço e é automaticamente válido
 
 ## Exemplo de Uso
@@ -160,6 +162,7 @@ console.log(`${identificacao.chavesValidas} de ${identificacao.titulosComChave} 
 ### `NFeValidationBadge`
 
 Badge inteligente que exibe o status de validação dos documentos fiscais na listagem de remessas:
+
 - Identifica automaticamente o tipo predominante (NFe, CTe, Nota de Serviço, Misto)
 - Mostra ícones específicos para cada tipo de documento
 - Exibe tooltips informativos com detalhes da validação
@@ -167,6 +170,7 @@ Badge inteligente que exibe o status de validação dos documentos fiscais na li
 ### `NFeValidationCard`
 
 Card detalhado que mostra informações completas sobre a validação dos documentos fiscais na página de detalhes da remessa:
+
 - Estatísticas resumidas da validação
 - Modal com análise detalhada de cada documento
 - Identificação visual do tipo de cada documento
