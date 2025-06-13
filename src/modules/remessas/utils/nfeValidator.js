@@ -15,7 +15,8 @@ const CODIGOS_UF_VALIDOS = [
 const MODELOS_VALIDOS = {
     '55': 'NFe',     // Nota Fiscal Eletrônica
     '57': 'CTe',     // Conhecimento de Transporte Eletrônico
-    '65': 'NFCe'     // Nota Fiscal de Consumidor Eletrônica
+    '65': 'NFCe',     // Nota Fiscal de Consumidor Eletrônica
+    '67': 'CTe'     // Conhecimento de Transporte Eletrônico de Ocorrência de Serviço
 };
 
 // Tipos de documento baseados no comprimento
