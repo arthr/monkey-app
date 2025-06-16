@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button, Alert, Badge, Modal, Spinner, ModalBody, ModalHeader } from "flowbite-react";
-import { FiArrowLeft, FiCheck, FiDownload, FiAlertCircle, FiInfo, FiSettings } from "react-icons/fi";
+import { FiArrowLeft, FiCheck, FiDownload, FiAlertCircle, FiInfo, FiSettings, FiDatabase } from "react-icons/fi";
 
 // Components
 import DetailCard from "../components/DetailCard";
@@ -93,12 +93,20 @@ const DetalhesContent = () => {
     }
 
     return (
-        <div className="mx-auto">
+        <div className="p-6 mx-auto">
             <div className="flex flex-col items-start mb-6">
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
-                    Detalhes da Remessa
-                </h3>
-                <p className="text-gray-400 mb-4">{remessa.filename}</p>
+                {/* Cabeçalho da página */}
+                <div className="mb-6">
+                    <div className="flex items-center space-x-3 mb-2">
+                        <FiDatabase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                            Detalhamento da Remessa
+                        </h1>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400">
+                    {remessa.companyPrefix == 'FID' ? 'FIDC' : 'Securitizadora'}: <span className="font-medium text-blue-600 dark:text-blue-400">{remessa.filename}</span>
+                    </p>
+                </div>
 
                 {/* Botões de ação no topo */}
                 <div className="w-full flex flex-col sm:flex-row justify-between gap-4 mb-6">
@@ -218,23 +226,23 @@ const DetalhesContent = () => {
                     <DetailCard title="Informações da Remessa">
                         <ul className="space-y-2">
                             <li className="flex justify-between">
-                                <span className="text-gray-600">Arquivo:</span>
+                                <span className="text-gray-500">Arquivo:</span>
                                 <span className="font-medium">{remessa.filename}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-600">Data de Importação:</span>
+                                <span className="text-gray-500">Data de Importação:</span>
                                 <span className="font-medium">{new Date(remessa.timestamp).toLocaleString()}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-600">Quantidade de Títulos:</span>
+                                <span className="text-gray-500">Quantidade de Títulos:</span>
                                 <span className="font-medium">{remessa.titulos?.length || 0}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-600">Valor Total:</span>
+                                <span className="text-gray-500">Valor Total:</span>
                                 <span className="font-medium">{valorTotal}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-600">Situação:</span>
+                                <span className="text-gray-500">Situação:</span>
                                 <span>
                                     {remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
                                         <Badge color="success">Aprovada</Badge>
@@ -247,7 +255,7 @@ const DetalhesContent = () => {
                             </li>
                             {remessa.situacao?.usuario && (
                                 <li className="flex justify-between">
-                                    <span className="text-gray-600">Usuário:</span>
+                                    <span className="text-gray-500">Usuário:</span>
                                     <span className="font-medium">{remessa.situacao.usuario}</span>
                                 </li>
                             )}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Alert } from 'flowbite-react';
-import { FiFileText, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { BsFiletypeXml } from "react-icons/bs";
 import FileUpload from '../components/FileUpload';
 import NfeVisualizacao from '../components/NfeVisualizacao';
 import xmlParser from '../services/xmlParser';
@@ -37,11 +38,11 @@ const PreVisualizacaoPage = () => {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6 mx-auto">
             {/* Cabeçalho da página */}
             <div className="mb-6">
                 <div className="flex items-center space-x-3 mb-2">
-                    <FiFileText className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    <BsFiletypeXml className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                         Pré-visualização de NFe
                     </h1>
@@ -92,7 +93,7 @@ const PreVisualizacaoPage = () => {
             {!nfeData && !loading && !error && (
                 <Card className="text-center py-12">
                     <div className="flex flex-col items-center space-y-4">
-                        <FiFileText className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+                        <BsFiletypeXml className="w-16 h-16 text-gray-300 dark:text-gray-600" />
                         <div>
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                                 Nenhum arquivo selecionado

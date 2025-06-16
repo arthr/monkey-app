@@ -6,7 +6,7 @@ import RemessaTable from '../components/RemessaTable';
 import Loader from '../components/Loader';
 import DateFilter from '../components/DateFilter';
 import { Alert } from 'flowbite-react';
-import { FiInfo, FiAlertCircle } from 'react-icons/fi';
+import { FiInfo, FiAlertCircle, FiDatabase } from 'react-icons/fi';
 
 const ListarContent = () => {
     const { remessas, loading, error, fetchTodayRemessas, refreshRemessas } = useRemessaData();
@@ -24,11 +24,21 @@ const ListarContent = () => {
     };
 
     return (
-        <div className="mx-auto">
+        <div className="p-6 mx-auto">
             <div className="flex flex-col items-start mb-6">
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
-                    Remessas
-                </h3>
+                {/* Cabeçalho da página */}
+                <div className="mb-6">
+                    <div className="flex items-center space-x-3 mb-2">
+                        <FiDatabase className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                            Remessas
+                        </h1>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400">
+                        Lista de remessas recepcionadas.
+                    </p>
+                </div>
+
                 <DateFilter
                     onFilterChange={handleDateFilterChange}
                 />

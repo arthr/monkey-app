@@ -7,8 +7,8 @@ import {
     SidebarItemGroup,
 } from 'flowbite-react';
 import useLayout from '../hooks/useLayout'
-import { FaRegFileAlt } from "react-icons/fa";
-import { FiFileText } from "react-icons/fi";
+import { FiDatabase } from "react-icons/fi";
+import { BsFiletypeXml } from "react-icons/bs";
 
 function SidebarComponent() {
     const { sidebarCollapsed } = useLayout();
@@ -33,7 +33,7 @@ function SidebarComponent() {
                             key={1}
                             as={Link}
                             to="/" // Caminho relativo gerenciado pelo React Router
-                            icon={FaRegFileAlt}
+                            icon={FiDatabase}
                             active={pathname === "/"}
                         >
                             Remessas
@@ -42,7 +42,7 @@ function SidebarComponent() {
                             key={2}
                             as={Link}
                             to="/nfe" // Caminho para o módulo NFe
-                            icon={FiFileText}
+                            icon={BsFiletypeXml}
                             active={pathname.startsWith("/nfe")}
                         >
                             NFe
