@@ -1,27 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import useAuth from '../../auth/hooks/useAuth';
-import useRemessas from '../hooks/useRemessas';
+import { RemessasProvider } from '../contexts';
+import { useRemessaData } from '../hooks/useRemessaData';
 import RemessaTable from '../components/RemessaTable';
 import Loader from '../components/Loader';
 import DateFilter from '../components/DateFilter';
 import { Alert } from 'flowbite-react';
 import { FiInfo, FiAlertCircle } from 'react-icons/fi';
 
-const Listar = () => {
-    // const auth = useAuth();
-    // const { user } = auth;
-    // const { profile } = user || {};
+const ListarContent = () => {
+    const { remessas, loading, error, fetchTodayRemessas, refreshRemessas } = useRemessaData();
 
-    const {
-        remessas,
-        loading,
-        error,
-        dateFilter,
-        setDateFilter,
-        filterMode,
-        setFilterMode,
-        refresh
-    } = useRemessas();
+    useEffect(() => {
+        fetchTodayRemessas();
+    }, [fetchTodayRemessas]);
+
+    const handleDateFilterChange = (dateFilter, filterMode) => {
+        if (filterMode === 'today') {
+            fetchTodayRemessas();
+        } else {
+            refreshRemessas(dateFilter);
+        }
+    };
 
     return (
         <div className="mx-auto">
@@ -30,11 +30,7 @@ const Listar = () => {
                     Remessas
                 </h3>
                 <DateFilter
-                    dateFilter={dateFilter}
-                    setDateFilter={setDateFilter}
-                    filterMode={filterMode}
-                    setFilterMode={setFilterMode}
-                    onRefresh={refresh}
+                    onFilterChange={handleDateFilterChange}
                 />
 
                 {error && (
@@ -52,12 +48,18 @@ const Listar = () => {
                 {loading ? (
                     <Loader />
                 ) : (
-                    <RemessaTable
-                        remessas={remessas}
-                    />
+                    <RemessaTable />
                 )}
             </div>
         </div>
+    );
+};
+
+const Listar = () => {
+    return (
+        <RemessasProvider>
+            <ListarContent />
+        </RemessasProvider>
     );
 };
 

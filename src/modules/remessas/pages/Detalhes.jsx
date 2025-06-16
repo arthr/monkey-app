@@ -10,18 +10,27 @@ import AprovarReprovar from "../components/AprovarReprovar";
 import Loader from "../components/Loader";
 import NFeValidationCard from "../components/NFeValidationCard";
 
-// Hooks
-import useRemessaDetail from "../hooks/useRemessaDetail";
+// Context and Hooks
+import { RemessasProvider } from '../contexts';
+import { useRemessaData } from '../hooks/useRemessaData';
+import { useRemessaActions } from '../hooks/useRemessaActions';
+import { useRemessaCalculations } from '../hooks/useRemessaCalculations';
 
-const Detalhes = () => {
+const DetalhesContent = () => {
     const { filename } = useParams();
-    const {
-        remessa, loading, error,
+    const { remessa, loading, error, fetchRemessaByFilename } = useRemessaData();
+    const { 
+        downloadRemessa, downloadRetorno, downloadCorrigida, gerarCorrigida,
         downloadingRemessa, downloadingRetorno, downloadingCorrigida, gerandoCorrigida,
-        remessaUrl, retornoUrl, remessaCorrigidaUrl,
-        refreshRemessa, fetchRemessaUrl, fetchRetornoUrl, gerarCnabCorrigido, fetchRemessaCorrigidaUrl
-    } = useRemessaDetail(filename);
+        remessaUrl, retornoUrl, remessaCorrigidaUrl
+    } = useRemessaActions();
     const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    useEffect(() => {
+        if (filename) {
+            fetchRemessaByFilename(filename);
+        }
+    }, [filename, fetchRemessaByFilename]);
 
     useEffect(() => {
         if (remessaUrl) {
@@ -41,18 +50,7 @@ const Detalhes = () => {
         }
     }, [remessaCorrigidaUrl]);
 
-    // Função para calcular o valor total dos títulos
-    const calcularValorTotal = () => {
-        if (!remessa?.titulos) return "R$ 0,00";
-        const total = remessa.titulos.reduce(
-            (sum, titulo) => sum + parseFloat(titulo.valorTitulo || 0),
-            0
-        );
-        return total.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        });
-    };
+    const { valorTotal } = useRemessaCalculations(remessa);
 
     if (loading) {
         return <Loader />;
@@ -113,7 +111,7 @@ const Detalhes = () => {
 
                     <div className="flex flex-col sm:flex-row gap-2">
                         {remessa.filename && (
-                            <Button outline color="cyan" onClick={async () => fetchRemessaUrl(remessa.filename)} disabled={downloadingRemessa}>
+                            <Button outline color="cyan" onClick={() => downloadRemessa(remessa.filename)} disabled={downloadingRemessa}>
                                 {downloadingRemessa ? (
                                     <>
                                         <Spinner className="mr-2 size-5" />
@@ -128,7 +126,7 @@ const Detalhes = () => {
                             </Button>
                         )}
                         {remessa.arquivoRetorno && (
-                            <Button outline color="gray" onClick={async () => fetchRetornoUrl(remessa.arquivoRetorno)} disabled={downloadingRetorno}>
+                            <Button outline color="gray" onClick={() => downloadRetorno(remessa.arquivoRetorno)} disabled={downloadingRetorno}>
                                 {downloadingRetorno ? (
                                     <>
                                         <Spinner className="mr-2 size-5" />
@@ -145,7 +143,7 @@ const Detalhes = () => {
 
                         {/* Botão para gerar/baixar CNAB corrigido */}
                         {remessa.arquivoCorrigido ? (
-                            <Button outline color="purple" onClick={async () => fetchRemessaCorrigidaUrl(remessa.filename, remessa.timestamp)} disabled={downloadingCorrigida}>
+                            <Button outline color="purple" onClick={() => downloadCorrigida(remessa.filename, remessa.timestamp)} disabled={downloadingCorrigida}>
                                 {downloadingCorrigida ? (
                                     <>
                                         <Spinner className="mr-2 size-5" />
@@ -159,7 +157,7 @@ const Detalhes = () => {
                                 )}
                             </Button>
                         ) : (
-                            <Button outline color="purple" onClick={gerarCnabCorrigido} disabled={gerandoCorrigida}>
+                            <Button outline color="purple" onClick={() => gerarCorrigida(remessa)} disabled={gerandoCorrigida}>
                                 {gerandoCorrigida ? (
                                     <>
                                         <Spinner className="mr-2 size-5" />
@@ -216,85 +214,83 @@ const Detalhes = () => {
                         </ul>
                     </DetailCard>
 
-                    {/* Situação */}
-                    <DetailCard title="Situação">
+                    {/* Informações da Remessa */}
+                    <DetailCard title="Informações da Remessa">
                         <ul className="space-y-2">
                             <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Usuário:</span>
-                                <span className="font-medium">{remessa.situacao?.usuario || "N/D"}</span>
+                                <span className="text-gray-600">Arquivo:</span>
+                                <span className="font-medium">{remessa.filename}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Status:</span>
-                                <Badge
-                                    color={remessa.situacao?.aprovada ? "success" : (!remessa.situacao?.aprovada && remessa.situacao?.timestamp ? "failure" : "warning")}
-                                >
-                                    {remessa.situacao?.aprovada ? "Aprovada" : (!remessa.situacao?.aprovada && remessa.situacao?.timestamp ? "Reprovada" : "Pendente")}
-                                </Badge>
+                                <span className="text-gray-600">Data de Importação:</span>
+                                <span className="font-medium">{new Date(remessa.timestamp).toLocaleString()}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Data da Situação</span>
-                                <span className="font-medium">
-                                    {remessa.situacao?.timestamp
-                                        ? new Date(remessa.situacao?.timestamp).toLocaleString()
-                                        : "N/D"}
-                                </span>
-                            </li>
-                        </ul>
-                    </DetailCard>
-
-                    {/* Informações adicionais */}
-                    <DetailCard title="Informações Adicionais">
-                        <ul className="space-y-2">
-                            <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Valor Total:</span>
-                                <span className="font-medium">{calcularValorTotal()}</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Títulos:</span>
+                                <span className="text-gray-600">Quantidade de Títulos:</span>
                                 <span className="font-medium">{remessa.titulos?.length || 0}</span>
                             </li>
                             <li className="flex justify-between">
-                                <span className="text-gray-500 dark:text-gray-400">Data de Importação:</span>
-                                <span className="font-medium">
-                                    {remessa.timestamp
-                                        ? new Date(remessa.timestamp).toLocaleString()
-                                        : "N/D"}
+                                <span className="text-gray-600">Valor Total:</span>
+                                <span className="font-medium">{valorTotal}</span>
+                            </li>
+                            <li className="flex justify-between">
+                                <span className="text-gray-600">Situação:</span>
+                                <span>
+                                    {remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
+                                        <Badge color="success">Aprovada</Badge>
+                                    ) : !remessa.situacao?.aprovada && remessa.situacao?.timestamp ? (
+                                        <Badge color="failure">Reprovada</Badge>
+                                    ) : (
+                                        <Badge color="warning">Pendente</Badge>
+                                    )}
                                 </span>
                             </li>
+                            {remessa.situacao?.usuario && (
+                                <li className="flex justify-between">
+                                    <span className="text-gray-600">Usuário:</span>
+                                    <span className="font-medium">{remessa.situacao.usuario}</span>
+                                </li>
+                            )}
+                            {remessa.situacao?.observacoes && (
+                                <li className="flex flex-col">
+                                    <span className="text-gray-600 mb-1">Observações:</span>
+                                    <span className="font-medium text-sm bg-gray-50 p-2 rounded">{remessa.situacao.observacoes}</span>
+                                </li>
+                            )}
                         </ul>
                     </DetailCard>
-                </div>
 
-                {/* Validação NFe */}
-                <div className="w-full mb-6">
+                    {/* Validação de NFe */}
                     <NFeValidationCard remessa={remessa} />
                 </div>
 
                 {/* Tabela de títulos */}
-                <div className="w-full">
-                    <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Títulos</h4>
-                    <TitulosTable titulos={remessa.titulos} />
-                </div>
-            </div>
+                <TitulosTable titulos={remessa.titulos} />
 
-            {/* Modal de Aprovar/Reprovar */}
-            <Modal
-                show={modalIsOpen}
-                onClose={() => setModalIsOpen(false)}
-                dismissible
-            >
-                <ModalHeader>
-                    Aprovar ou Reprovar Remessa
-                </ModalHeader>
-                <ModalBody className="py-1 px-2">
-                    <AprovarReprovar
-                        remessa={remessa}
-                        onClose={() => setModalIsOpen(false)}
-                        onSuccess={refreshRemessa}
-                    />
-                </ModalBody>
-            </Modal>
+                {/* Modal de aprovação/reprovação */}
+                <Modal show={modalIsOpen} onClose={() => setModalIsOpen(false)}>
+                    <ModalHeader>Aprovar / Reprovar Remessa</ModalHeader>
+                    <ModalBody>
+                        <AprovarReprovar
+                            remessa={remessa}
+                            onClose={() => setModalIsOpen(false)}
+                            onSuccess={() => {
+                                setModalIsOpen(false);
+                                fetchRemessaByFilename(filename);
+                            }}
+                        />
+                    </ModalBody>
+                </Modal>
+            </div>
         </div>
+    );
+};
+
+const Detalhes = () => {
+    return (
+        <RemessasProvider>
+            <DetalhesContent />
+        </RemessasProvider>
     );
 };
 

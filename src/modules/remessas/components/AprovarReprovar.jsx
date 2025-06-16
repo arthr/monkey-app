@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import { Button, TextInput, Alert } from 'flowbite-react';
-import { approveRemessa } from '../services/remessaApi';
 import { FiCheck, FiX, FiSend, FiLogOut } from 'react-icons/fi';
 import useAuth from '../../auth/hooks/useAuth';
+import { useRemessaActions } from '../hooks/useRemessaActions';
 
 const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
     const { user } = useAuth();
+    const { approveRemessa, approvingRemessa, error } = useRemessaActions();
     const [aprovada, setAprovada] = useState(null);
     const [usuario] = useState(user.profile.name || false);
-    const [error, setError] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
         if (!usuario) {
-            setError("Por favor, insira o nome do operador.");
             return;
         }
 
@@ -22,16 +20,10 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
             usuario
         };
 
-        setIsSubmitting(true);
-        try {
-            await approveRemessa(remessa.filename, remessa.timestamp, data);
+        const success = await approveRemessa(remessa.filename, remessa.timestamp, data);
+        if (success) {
             if (onSuccess) onSuccess();
             onClose();
-        } catch (error) {
-            console.error("Erro ao aprovar/reprovar a remessa: ", error);
-            setError(`Erro ao processar: ${error.message || 'Tente novamente mais tarde'}`);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -56,7 +48,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     placeholder="Digite seu nome para confirmar"
                     value={usuario}
                     readOnly={true}
-                    disabled={isSubmitting}
+                    disabled={approvingRemessa}
                 />
             </div>
 
@@ -65,7 +57,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     outline
                     color="green"
                     onClick={() => setAprovada(true)}
-                    disabled={aprovada === true || isSubmitting}
+                    disabled={aprovada === true || approvingRemessa}
                     className="flex-1"
                 >
                     <FiCheck className="mr-2" />
@@ -75,7 +67,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     outline
                     color="red"
                     onClick={() => setAprovada(false)}
-                    disabled={aprovada === false || isSubmitting}
+                    disabled={aprovada === false || approvingRemessa}
                     className="flex-1"
                 >
                     <FiX className="mr-2" />
@@ -85,7 +77,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                     outline
                     color="blue"
                     onClick={handleSubmit}
-                    disabled={aprovada === null || isSubmitting}
+                    disabled={aprovada === null || approvingRemessa}
                     className="flex-1"
                 >
                     <FiSend className="mr-2" />
@@ -94,7 +86,7 @@ const AprovarReprovar = ({ remessa, onClose, onSuccess }) => {
                 <Button
                     color="light"
                     onClick={onClose}
-                    disabled={isSubmitting}
+                    disabled={approvingRemessa}
                     className="flex-1"
                 >
                     <FiLogOut className="mr-2" />

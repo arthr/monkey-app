@@ -2,32 +2,41 @@ import React, { useState } from 'react';
 import { Button, Card, Label, TextInput, ToggleSwitch } from 'flowbite-react';
 import { FiCalendar, FiRefreshCw } from 'react-icons/fi';
 
-const DateFilter = ({ dateFilter, setDateFilter, filterMode, setFilterMode, onRefresh }) => {
-    const [startDate, setStartDate] = useState(dateFilter.startDate || '');
-    const [endDate, setEndDate] = useState(dateFilter.endDate || '');
+const DateFilter = ({ onFilterChange }) => {
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [filterMode, setFilterMode] = useState('today');
 
     const handleApplyFilter = () => {
-        setDateFilter({
-            startDate,
-            endDate
-        });
+        const dateFilter = {
+            start: startDate || null,
+            end: endDate || null
+        };
+        onFilterChange(dateFilter, 'custom');
     };
 
     const handleReset = () => {
         setStartDate('');
         setEndDate('');
         setFilterMode('today');
-        setDateFilter({
-            startDate: null,
-            endDate: null
-        });
+        onFilterChange({ start: null, end: null }, 'today');
     };
 
     const handleToggle = (checked) => {
-        setFilterMode(checked ? 'custom' : 'today');
+        const newMode = checked ? 'custom' : 'today';
+        setFilterMode(newMode);
         if (!checked) {
-            handleReset();
+            setStartDate('');
+            setEndDate('');
+            onFilterChange({ start: null, end: null }, 'today');
         }
+    };
+
+    const handleRefresh = () => {
+        const dateFilter = filterMode === 'custom' 
+            ? { start: startDate || null, end: endDate || null }
+            : { start: null, end: null };
+        onFilterChange(dateFilter, filterMode);
     };
 
     return (
@@ -101,7 +110,7 @@ const DateFilter = ({ dateFilter, setDateFilter, filterMode, setFilterMode, onRe
                 
                 <Button 
                     color="gray"
-                    onClick={onRefresh}
+                    onClick={handleRefresh}
                     className="md:self-end"
                 >
                     <FiRefreshCw className="mr-2 h-4 w-4" />
