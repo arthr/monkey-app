@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getDocumentStatus, getSituacaoStatus } from '../utils/remessaFilters';
+import { getDocumentStatus, getSituacaoStatus, getTipoDocumentoPredominante } from '../utils/remessaFilters';
 
 export const useRemessaCalculations = (remessa) => {
   const valorTotal = useMemo(() => {
@@ -34,11 +34,16 @@ export const useRemessaCalculations = (remessa) => {
     return remessa?.titulos?.length || 0;
   }, [remessa?.titulos]);
 
+  const tipoDocumentoPredominante = useMemo(() => {
+    return getTipoDocumentoPredominante(remessa);
+  }, [remessa]);
+
   return {
     valorTotal,
     valorTotalNumerico,
     documentStatus,
     situacaoStatus,
-    quantidadeTitulos
+    quantidadeTitulos,
+    tipoDocumentoPredominante
   };
 }; 

@@ -87,9 +87,12 @@ const RemessaTable = memo(() => {
                         className="min-w-[180px]"
                     >
                         <option value="todos">Todos os Documentos</option>
-                        <option value="identificados">Identificados</option>
-                        <option value="nao-identificados">Não Identificados</option>
+                        <option value="nfe">NFe</option>
+                        <option value="cte">CTe</option>
+                        <option value="ns">NS</option>
+                        <option value="misto">Misto</option>
                         <option value="sem-documentos">Sem Documentos</option>
+                        <option value="nao-identificados">Não Identificados</option>
                     </Select>
 
                     {/* Filtro de Empresa */}
